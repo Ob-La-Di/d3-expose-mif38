@@ -1,0 +1,21 @@
+{
+  "name": "d3",
+  "authors": [
+    "Loïc BOUSQUET <loicbousquet93@gmail.com>"
+  ],
+  "description": "d3 tests",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "d3"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
