@@ -5,25 +5,55 @@
     <title>D3 test</title>
   </head>
   <body>
+    <div id="simple1">
+    </div>
 
-    <svg width="720" height="120">
-      <circle cx="40" cy="60" r="30" style="fill:steelblue;"></circle>
-      <circle cx="80" cy="60" r="30" style="fill:steelblue;"></circle>
-      <circle cx="120" cy="60" r="30" style="fill:steelblue;"></circle>
-    </svg>
+    <div id="canvasJs">
+
+    </div>
 
   <script type="text/javascript" src="bower_components/d3/d3.min.js">
   </script>
   <script type="text/javascript">
-    var circle = d3.selectAll("circle");
-    circle.style('fill', 'steelblue');
+    var data = [1,5,7,12,16,21,36,48]; // 8 valeurs
+    var dataCanvas = [10,15,25,30,28];
+    var labelCanvas = ['apple', 'orange', 'banana', 'mango', 'grape'];
 
-
-    
-    circle.data([30,89,150]);
-    circle.attr("r", function(d){
-      return d/10;
+    d3.select("#simple1").append("svg").attr("width", 400).attr("height", 150)
+    .selectAll("circle").data(data).enter().append("circle")
+    .attr('r', function(d){
+      return d+'px';
     })
+    .attr('cy', '60px')
+    .attr('cx', function(d, i){
+      return '0px';
+    })
+    .transition().delay(function(d,i){
+      return i*100;
+    }).attr('cx', function(d,i){
+      return i*40+'px';
+    });
+    // enter().append('circle').data(data).attr(function(d){
+    //   return {r:d+"px"};
+    // });
+
+    var h = 300;
+    var w = 500;
+    var canvasColors = [''];
+    console.log(w/dataCanvas.length);
+    d3.select('#canvasJs').append("svg").attr("width", w).attr("height", h)
+    .selectAll("rect").data(dataCanvas).enter().append("rect")
+    .attr('x', function(d,i){
+      return i* (w/dataCanvas.length);
+    })
+    .attr('y', function(d, i){
+        return h-d*4;
+    })
+    .attr('height', function(d,i){
+      return d*4;
+    })
+    .attr('width', (w / dataCanvas.length) - 10);
+
   </script>
   </body>
 </html>
