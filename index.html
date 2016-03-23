@@ -3,6 +3,17 @@
   <head>
     <meta charset="utf-8">
     <title>D3 test</title>
+    <style media="screen">
+      .canvasTooltip{
+        position: absolute;
+        width: 150px;
+        height: 20px;
+        border: 2px solid black;
+        line-height: 20px;
+        pointer-events: none;
+        background: white;
+      }
+    </style>
   </head>
   <body>
     <div id="simple1">
@@ -12,8 +23,8 @@
 
     </div>
 
-  <script type="text/javascript" src="bower_components/d3/d3.min.js">
-  </script>
+  <script type="text/javascript" src="bower_components/lodash/dist/lodash.min.js"></script>
+  <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
   <script type="text/javascript">
     var data = [1,5,7,12,16,21,36,48]; // 8 valeurs
     var dataCanvas = [10,15,25,30,28];
@@ -38,21 +49,35 @@
     // });
 
     var h = 300;
-    var w = 500;
+    var w = 550;
     var canvasColors = ["#948B29","#922428","#F15854","#4D4D4D","#5DA5DA"];
     var svgCanvas = d3.select('#canvasJs').append("svg").attr("width", w).attr("height", h);
 
+    var tooltip = d3.select("body").append('div').attr("class", "canvasTooltip").style("display","none");
     svgCanvas.selectAll("rect").data(dataCanvas).enter().append("rect")
     .attr('x', function(d,i){
-      return i*(w/dataCanvas.length);
+      return 50+i*((w-100)/dataCanvas.length);
     })
     .attr('y', function(d, i){
         return h;
     })
     .attr('height',0)
-    .attr('width', (w / dataCanvas.length) - 10)
+    .attr('width', ((w-100) / dataCanvas.length) - 10)
     .attr('fill', function(d,i){
       return canvasColors[i];
+    })
+    .on('mouseover', function(d,i){
+      tooltip.style("display","block");
+    })
+    .on("mousemove", _.throttle(function(d,i){
+      if(d3.event)
+      tooltip
+      .style("left", (d3.event.pageX - 34) + "px")
+      .style("top", (d3.event.pageY - 12) + "px")
+      .text(labelCanvas[i] + " : "+dataCanvas[i]);
+    },16))
+    .on("mouseout", function(){
+      tooltip.style("display","none");
     })
     .transition().duration(500).attr('height', function(d){
       return d*6;
@@ -61,18 +86,20 @@
       return h-50-d*6;
     });
 
+    //LABELS
     svgCanvas.selectAll("text").data(dataCanvas).enter().append('text')
     .attr("x", function(d,i){
-      return i* (w/dataCanvas.length);
+      return 50+ i* ((w-100)/dataCanvas.length);
     })
     .attr("width", function (d,i) {
-      return (w / dataCanvas.length) - 10;
+      return ((w-100) / dataCanvas.length) - 10;
     })
     .attr("y", h-25)
     .text(function(d,i){
       return labelCanvas[i];
     });
 
+    //TITLE
     svgCanvas.append("text")
     .attr("x", w / 2)
     .attr("y", 50)
@@ -80,9 +107,10 @@
     .style("text-anchor", "middle")
     .text("Basic Columns Chart - D3");
 
+    //AXES
     var y = d3.scale.linear()
         .domain([0,38])
-        .range([h, 0]);
+        .range([h-50, 0]);
 
     var yAxis = d3.svg.axis()
         .scale(y)
