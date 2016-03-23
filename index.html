@@ -12,6 +12,7 @@
         line-height: 20px;
         pointer-events: none;
         background: white;
+        margin-top: -20px;
       }
     </style>
   </head>
@@ -55,6 +56,18 @@
 
     var tooltip = d3.select("body").append('div').attr("class", "canvasTooltip").style("display","none");
     svgCanvas.selectAll("rect").data(dataCanvas).enter().append("rect")
+    .on('mouseover', function(d,i){
+      tooltip.style("display","block");
+    })
+    .on("mousemove",function(d,i){
+      tooltip
+      .style("left", (d3.event.pageX - 34) + "px")
+      .style("top", (d3.event.pageY - 12) + "px")
+      .text(labelCanvas[i] + " : "+dataCanvas[i]);
+    })
+    .on("mouseout", function(){
+      tooltip.style("display","none");
+    })
     .attr('x', function(d,i){
       return 50+i*((w-100)/dataCanvas.length);
     })
@@ -65,19 +78,6 @@
     .attr('width', ((w-100) / dataCanvas.length) - 10)
     .attr('fill', function(d,i){
       return canvasColors[i];
-    })
-    .on('mouseover', function(d,i){
-      tooltip.style("display","block");
-    })
-    .on("mousemove", _.throttle(function(d,i){
-      if(d3.event)
-      tooltip
-      .style("left", (d3.event.pageX - 34) + "px")
-      .style("top", (d3.event.pageY - 12) + "px")
-      .text(labelCanvas[i] + " : "+dataCanvas[i]);
-    },16))
-    .on("mouseout", function(){
-      tooltip.style("display","none");
     })
     .transition().duration(500).attr('height', function(d){
       return d*6;
